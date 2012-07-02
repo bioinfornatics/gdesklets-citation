@@ -1,0 +1,44 @@
+English:
+========
+
+gdesklets-citation is a tool to display periodically french quote. You can choose between several categories: celebrity,
+bible, simpson, french politician or all
+
+INSTALL
+--------
+Firstly you need to install gdesklets. to install this addon jus do:
+$ sudo make install
+
+the make script alow to you to select :
+ _______________________________________________________
+| Description    | Variable name | Default              |
+ _______________________________________________________
+| chroot path    | DESTDIR       |                      |
+| prefix path    | PREFIX        | /usr                 |
+| data path      | DATADIR       | /usr/share           |
+| gdesklets path | GDESKLETSDIR  | /usr/share/gdesklets |
+________________________________________________________
+
+
+Français
+========
+
+gdesklets-citation est un outil pour afficher periodiquement des citations en français. Vous pouvez choisir entre plusieur catégories: célébrité,
+bible, simpson, politicien français ou tous
+
+INSTALLION
+----------
+Premièrement vous devez installer gdesklets. Pour installer cet addons faites seulement:
+$ sudo make install
+
+Le script make vous permet de sélectionner :
+ _______________________________________________________
+| Description    | Variable name | Default              |
+ _______________________________________________________
+| chroot path    | DESTDIR       |                      |
+| prefix path    | PREFIX        | /usr                 |
+| data path      | DATADIR       | /usr/share           |
+| gdesklets path | GDESKLETSDIR  | /usr/share/gdesklets |
+________________________________________________________
+
+
