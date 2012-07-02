@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # \file citation.script
+ # \brief gdesklets-citation it's a fun deskltes with all quotes in french
+ # \author Jonathan MERCIER
+ # \version 1.0
+ # \date 09 march 2009
+ #
+ #  LICENSE:
+ #  gdesklets-citation it's a fun deskltes with all quotes in french
+ #  Copyright (C) <2009-2010>  <MERCIER Jonathan>
+ #
+ #  This program is free software: you can redistribute it and/or modify
+ #  it under the terms of the GNU General Public License as published by
+ #  the Free Software Foundation, either version 3 of the License, or
+ #  (at your option) any later version.
+ #
+ #  This program is distributed in the hope that it will be useful,
+ #  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ #  GNU General Public License for more details.
+ #
+ #  You should have received a copy of the GNU General Public License
+ #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ #
+Version History
+08 Mar 2009 - Add quotes of bible in french
+29 Jan 2009     - Initial Release
+29 Jan 2009     - bug fix
+30 Jan 2009     - bug fix.
+            - Perform the interval time betwwen quote. now user can choose interval
+30 Jan 2009 - bug fix
+            - Perform shadow text
+TODO
+
+-->
+
+    <display id="win" anchor="ne" window-flags="sticky, below">
+
+    <meta author="Jonathan MERCIER"
+        version="1.4"
+        name="Citation du jour"
+        category="Misc"
+        description="Desklet qui affiche une citation périodiquement"
+        preview="citation.png"/>
+
+    <!--  Retrieve the date/time control -->
+    <control id="random" interface="IRandom:bss2bsoo8o0dl3kumdpegtrc2-2"/>
+    <control id="time" interface="ITime:9y703dqtfnv4w373caserz68r"/>
+
+    <frame id="quoteframe" width="150pt">
+        <group id="displaygroup" relative-to="quoteframe,y" width="100%">
+            <image id="bg_image" image-width="100%" uri=""/>
+
+            <group id="quotegroupsh" relative-to="displaygroup,y" anchor="n" x="49.5%" y="-1pt" width="95%">
+                <label id="quote2" font="Sans Bold 10" color="#a0a0a0" wrap-at="95%"/>
+            </group>
+
+            <group id="quotegroup" relative-to="displaygroup,y" anchor="n" x="50%" width="95%">
+                <label id="quote" font="Sans Bold 10" color="#a0a0a0" wrap-at="95%"/>
+            </group>
+
+            <group id="qauthorgroupsh" relative-to="quotegroup,y" anchor="ne" x="47%" y="4.5pt">
+                <label id="qauthor2" font="Sans Bold 10" color="#a0a0a0"/>
+            </group>
+
+            <group id="qauthorgroup" relative-to="quotegroup,y" anchor="ne" x="47.5%" y="5pt">
+                <label id="qauthor" font="Sans Bold 10" color="#a0a0a0"/>
+            </group>
+<!--
+            <group id="paste" relative-to="quotegroup,y" anchor="nw" x="100%">
+                <image id="p1" uri="/usr/share/icons/LowContrast/48x48/stock/edit-paste.png" on-click="do_paste()"/>
+            </group>
+-->
+        </group>
+    </frame>
+
+    <prefs callback="prefs_cb">
+        <page label="Image">
+            <title label="Fond"/>
+
+            <boolean label="Choisir une image de fond" bind="background_image_visible" help="Choisir une image de fond?"/>
+
+            <uri id="bg_image_uri" label="Image de fond:" bind="bg_image"/>
+
+            <color id="bg_color_color" label="Couleur de fond" bind="bg_color"/>
+
+            <title label="Fenêtre"/>
+
+            <color label="Couleur de la fenêtre:" bind="frame_color"/>
+        </page>
+
+        <page label="Texte">
+            <title label="Police"/>
+
+            <font label="Police des citations:" bind="quote_font"/>
+
+            <color label="Couleur du texte:" bind="quote_font_color"/>
+
+            <font label="Polices des auteurs:" bind="qauthor_font"/>
+
+            <color label="Couleur du texte:" bind="qauthor_font_color"/>
+
+            <title label="Ombrage du texte"/>
+
+            <color id="shadow_color" label="Couleur de l'ombrage:" bind="quote2_font_color"/>
+        </page>
+
+        <page label="Préférence">
+            <title label="Préférence"/>
+
+            <float label="Largeur du desklet:" bind="size" min="100" max="500" help="La largeur du desklet."/>
+
+            <enum label="Changer de citation:" bind="interval" help="Sélectionne la fréquence de rafraichissement des citations">
+                <item label="Toutes les heures" value="hourly"  />
+                <item label="2 fois par jour"   value="twice"   />
+                <item label="Tous les jours"    value="daily"   />
+                <item label="Autres"            value="autres"  />
+            </enum>
+
+            <integer id="heures"  label="Heure:"    bind="heures"   min="0" max="23" help="configure intervalle d'affichage de citation toutes les X heures" enabled="False"    />
+            <integer id="minutes" label="Minute:"   bind="minutes"  min="1" max="59" help="configure intervalle d'affichage de citation toutes les X minutes" enabled="False"   />
+
+            <enum label="Type de citation" bind="citation_type" help="Sélectionne le type des citations">
+                <item label="Personne célèbre"  value="celebrity"   />
+                <item label="Politicien"        value="politic"     />
+                <item label="Simpson"           value="simpson"     />
+                <item label="Bible"             value="bible"       />
+                <item label="Tous"              value="all"         />
+            </enum>
+        </page>
+
+    </prefs>
+
+    <!-- This loads the quotes data -->
+    <script uri="citation.py"/>
+
+    <script>
+        #<![CDATA[
+        # MAIN
+        #watch time
+        time.bind("time", intervalle_affiche_citation)
+        intervalle_affiche_citation(time.date)
+
+        ]]>
+     </script>
+    </display>
