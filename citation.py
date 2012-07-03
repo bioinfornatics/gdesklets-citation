@@ -104,13 +104,13 @@ class MyDate(object):
 
     def __le__(self, other):
         result = False
-        if(self.heure <= other.heure):
+        if(self.heure < other.heure):
             result = True
         elif(self.heure == other.heure):
-            if(self.minute <= other.minute):
+            if(self.minute < other.minute):
                 result = True
             elif(self.minute == other.minute):
-                if(self.seconde <= other.seconde):
+                if(self.seconde < other.seconde):
                     result = True
                 elif(self.seconde == other.seconde):
                     result = True
@@ -144,10 +144,10 @@ class MyDate(object):
 
     def __ge__(self, other):
         result = False
-        if(self.heure >= other.heure):
+        if(self.heure > other.heure):
             result = True
         elif(self.heure == other.heure):
-            if(self.minute >= other.minute):
+            if(self.minute > other.minute):
                 result = True
             elif(self.minute == other.minute):
                 if(self.seconde >= other.seconde):
@@ -274,7 +274,7 @@ def initialize_timer(  ):
     global t0, t1, t
     t0 = MyDate( time.time )
     t1 = t + t0
-    debugger( "[initialize_timer] t' : %dh %dm %ds" %(heures, minutes, secondes) )
+    debugger( "[initialize_timer] t : %dh %dm %ds" %( t.time()  ) )
     debugger( "[initialize_timer] t0: %dh %dm %ds" %( t0.time() ) )
     debugger( "[initialize_timer] t1: %dh %dm %ds" %( t1.time() ) )
 
@@ -285,6 +285,8 @@ def refresh_quote( current_time ):
     debugger( "[refresh_quote] t1: %dh %dm %ds" %( t1.time() ) )
     debugger( "[refresh_quote] t2: %dh %dm %ds" %( t2.time() ) )
     debugger( "[refresh_quote] t : %dh %dm %ds" %( t.time()  ) )
+    debugger( "[refresh_quote] t2 >= t1 %s" %( t2 >= t1  ) )
+    debugger( "[refresh_quote] =========" )
     if( t2 >= t1 ):
         t0 = t1.dup()
         t1 = t2 + t
