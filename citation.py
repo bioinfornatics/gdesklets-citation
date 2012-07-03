@@ -3457,7 +3457,7 @@ def base_de_donnee_de_citation( category ):
 #BUGS
 # Switching back and forth between modes messes things up
 debug=False
-debug=True
+#~ debug=True
 
 # Globals
 bg_color                    = "#00000000"
