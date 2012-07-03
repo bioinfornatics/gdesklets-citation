@@ -22,29 +22,165 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Globals
-bg_color                    = "#00000000"
-frame_color                 = "#00000000"
-background_image_visible    = False
-bg_image                    = "bg/glass.svg"
-quote_font                  = "Serif Bold Italic 9"
-quote_font_color            = "#00FE00"
-quote2_font_color           = "#000000"
-qauthor_font                = "Sans Bold 8"
-qauthor_font_color          = "#FEA900"
-qauthor2_font_color         = "#000000"
-size                        = 175
-olddate                     = time.date
-h0,m0,s0                    = time.time
-interval                    = "hourly"
-heures                      = 0
-minutes                     = 1
-citation_type               = "celebrity"
+class MyDate(object):
+
+    def __init__(self, time_array ):
+        self.__heure    = time_array[0]
+        self.__minute   = time_array[1]
+        self.__seconde  = time_array[2]
+        self.__initialize()
+
+    def __initialize(self):
+        self.ajouteHeure(0)
+        self.ajouteMinute(0)
+        self.ajouteSeconde(0)
+
+    def getHeure( self ):
+        return self.__heure
+
+    def setHeure( self, heure ):
+        self.__heure = heure
+
+    def ajouteHeure( self, ajout_heure ):
+        self.__heure += ajout_heure
+        while( self.__heure >= 24):
+            self.__heure -= 24
+
+    def getMinute( self ):
+        return self.__minute
+
+    def setMinute( self, minute ):
+        self.__minute = minute
+
+    def ajouteMinute( self, ajout_minute ):
+        self.__minute += ajout_minute
+        while( self.__minute >= 60 ):
+            self.__minute -= 60
+            self.ajouteHeure( 1 )
+
+    def getSeconde( self ):
+        return self.__seconde
+
+    def setSeconde( self, seconde ):
+        self.__seconde = seconde
+
+    def ajouteSeconde( self, ajout_seconde ):
+        self.__seconde += ajout_seconde
+        while( self.__seconde >= 60 ):
+            self.__seconde -= 60
+            self.ajouteMinute(  1 )
+
+    def time( self ):
+        return (self.__heure, self.__minute, self.__seconde)
+
+    def dup( self ):
+        return MyDate( self.time() )
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return self.__dict__ != other.__dict__
+
+    def __lt__(self, other):
+        result = False
+        if(self.heure < other.heure):
+            result = True
+        elif(self.heure == other.heure):
+            if(self.minute < other.minute):
+                result = True
+            elif(self.minute == other.minute):
+                if(self.seconde < other.seconde):
+                    result = True
+                elif(self.seconde == other.seconde):
+                    result = False
+                else:
+                    result = False
+            else:
+                result = False
+        else:
+            result = False
+        return  result
+
+    def __le__(self, other):
+        result = False
+        if(self.heure <= other.heure):
+            result = True
+        elif(self.heure == other.heure):
+            if(self.minute <= other.minute):
+                result = True
+            elif(self.minute == other.minute):
+                if(self.seconde <= other.seconde):
+                    result = True
+                elif(self.seconde == other.seconde):
+                    result = True
+                else:
+                    result = False
+            else:
+                result = False
+        else:
+            result = False
+        return  result
+
+    def __gt__(self, other):
+        result = False
+        if(self.heure > other.heure):
+            result = True
+        elif(self.heure == other.heure):
+            if(self.minute > other.minute):
+                result = True
+            elif(self.minute == other.minute):
+                if(self.seconde > other.seconde):
+                    result = True
+                elif(self.seconde == other.seconde):
+                    result = False
+                else:
+                    result = False
+            else:
+                result = False
+        else:
+            result = False
+        return  result
+
+    def __ge__(self, other):
+        result = False
+        if(self.heure >= other.heure):
+            result = True
+        elif(self.heure == other.heure):
+            if(self.minute >= other.minute):
+                result = True
+            elif(self.minute == other.minute):
+                if(self.seconde >= other.seconde):
+                    result = True
+                elif(self.seconde == other.seconde):
+                    result = True
+                else:
+                    result = False
+            else:
+                result = False
+        else:
+            result = False
+        return  result
+
+    def __add__(self, other):
+        return MyDate( (self.heure + other.heure, self.minute + other.minute, self.seconde + other.seconde) )
+
+    #~ def __sub__(self, other):
+        #~ return MyDate( (self.heure - other.heure, self.minute - other.minute, self.seconde - other.seconde) )
+
+    heure   = property(getHeure, setHeure)
+    minute  = property(getMinute, setMinute)
+    seconde = property(getSeconde, setSeconde)
+
+
+def debugger(text):
+    if debug:
+        print "Debug(citation.py) %s" % text
+
 
 #This defines behaviour of preferences keys
 def prefs_cb( key, value ):
-    hh,mm,ss    = time.time
-
+    debugger("[prefs_cb] key %s value %s" % (key, value) )
     # background image
     if (key == "background_image_visible"):
         Dsp.bg_image.uri                = bg_image
@@ -97,52 +233,62 @@ def prefs_cb( key, value ):
 
     elif (key == "size"):
         Dsp.quoteframe.width = Unit(value, PT)
-        Dsp.quote.font                  = "Serif Bold Italic 9"
         Dsp.quote.font                  = quote_font
-        Dsp.quote2.font                 = "Serif Bold Italic 9"
         Dsp.quote2.font                 = quote_font
 
     elif (key == "interval"):
-        Prefs.heures.enabled            = False
-        Prefs.minutes.enabled           = False
-        affiche_citation()
+        global heures, minutes, secondes, t
+        if (interval == "daily") or (interval == "hourly") or (interval == "twice"):
+            Prefs.heures.enabled        = False
+            Prefs.minutes.enabled       = False
+            Prefs.secondes.enabled      = False
+            if(interval == "daily"):
+                    heures = 24
+            elif(interval == "twice"):
+                    heures = 12
+            elif(interval == "hourly"):
+                    heures = 1
+        elif (interval == "others"):
+            Prefs.heures.enabled        = True
+            Prefs.minutes.enabled       = True
+            Prefs.secondes.enabled      = True
+            if( heures == 0 and minutes == 0 and secondes == 0):
+                secondes = 1
+        else:
+            debugger( "Pref: key: %s unknown value: %s" % (key, value) )
+        t = MyDate( (heures, minutes, secondes ) )
+        initialize_timer(  )
+
+    elif( key == "heures" or key == "minutes" or key == "secondes" ):
+        if( heures == 0 and minutes == 0 and secondes == 0):
+            secondes = 1
+        t = MyDate( (heures, minutes, secondes ) )
+        initialize_timer(  )
 
     elif (key == "citation_type"):
         if( value not in ["celebrity", "bible", "politic", "simpson", "all"] ):
             citation_type = "celebrity"
         affiche_citation()
 
-def intervalle_affiche_citation( value ):
-    global h0,m0
-    hh,mm,ss                            = time.time
-    if (interval == "daily"):
-        Prefs.heures.enabled            = False
-        Prefs.minutes.enabled           = False
-        affiche_citation()
+def initialize_timer(  ):
+    global t0, t1, t
+    t0 = MyDate( time.time )
+    t1 = t + t0
+    debugger( "[initialize_timer] t' : %dh %dm %ds" %(heures, minutes, secondes) )
+    debugger( "[initialize_timer] t0: %dh %dm %ds" %( t0.time() ) )
+    debugger( "[initialize_timer] t1: %dh %dm %ds" %( t1.time() ) )
 
-    #change citation à la minute et à la seconde choisis, ici  m = 1 et s = 1
-    elif (interval == "hourly") and ( mm == 1 and ss == 1 ):
-        Prefs.heures.enabled            = False
-        Prefs.minutes.enabled           = False
+def refresh_quote( current_time ):
+    global t0, t1, t
+    t2 = MyDate( current_time )
+    debugger( "[refresh_quote] t0: %dh %dm %ds" %( t0.time() ) )
+    debugger( "[refresh_quote] t1: %dh %dm %ds" %( t1.time() ) )
+    debugger( "[refresh_quote] t2: %dh %dm %ds" %( t2.time() ) )
+    debugger( "[refresh_quote] t : %dh %dm %ds" %( t.time()  ) )
+    if( t2 >= t1 ):
+        t0 = t1.dup()
+        t1 = t2 + t
         affiche_citation()
-
-    elif (interval == "twice") and ( hh == 12 or hh == 0 ) and ( mm == 1 and ss == 1 ):
-        Prefs.heures.enabled            = False
-        Prefs.minutes.enabled           = False
-        affiche_citation()
-
-    elif (interval == "autres"):
-        Prefs.heures.enabled            = True
-        Prefs.minutes.enabled           = True
-        h1                              = h0 + heures
-        m1                              = m0 + minutes
-        if (m1 >= 60):
-            m1 = m1 - 60
-        if (h1 >= 24):
-            h1 = h1 - 24
-        if (hh == h1) and (mm == m1):
-            h0,m0,s0                    = time.time
-            affiche_citation()
 
 # Function
 
@@ -2910,7 +3056,7 @@ def base_de_donnee_de_citation( category ):
             u"Milhouse : Il est à Denis Leary ! Euh... Je suis désolé, Bart. Je résiste pas à l'envie de faire plaisir à un adulte."
         ]
         film = [
-            u"Homer : pider Cochon, Spider Cochon, Il peut marcher au plafond. Est-ce qu'il peut faire une toile ? Biensûr que non, c'est un cochon. Prends garde ! Spider Cochon est là."
+            u"Homer : Spider Cochon, Spider Cochon, Il peut marcher au plafond. Est-ce qu'il peut faire une toile ? Biensûr que non, c'est un cochon. Prends garde ! Spider Cochon est là."
         ]
         bdd =[
             {'auteur':"Saison 1"    ,       'citation':saison1      ,       'bind':"saison1"    },
@@ -2993,13 +3139,13 @@ def base_de_donnee_de_citation( category ):
             u"Une touche de rose, vert, rouge : c’est le retour de la gouache plurielle. - 2010"
         ]
         chevenement = [
-            u"Hollande propose des Assises de la Gauche. Pourquoi des Assises ? La correctionnelle suffirait ! (à propos des «assises de la transformation sociale») - 2007"
+            u"[Hollande propos des «assises de la transformation sociale de la Gauche».] Pourquoi des Assises ? La correctionnelle suffirait ! - 2007"
         ]
         bachelay = [
             u"Qu’on commette des erreurs en politique c’est possible ; qu’on les commette toutes, c’est fou !- 2011"
         ]
         bchirac = [
-            u"Heureusement qu’on vous a ; et, en plus, je suis sincère. (S'adressant à Nicolas Sarkozy) - 2004",
+            u"[S'adressant à Nicolas Sarkozy] Heureusement qu’on vous a ; et, en plus, je suis sincère. - 2004",
             u"Je ne l'ai pas beaucoup côtoyé à l’Élysée, on peut ne pas prendre le même escalier (À propos de Dominique de Villepin) - 2006"
         ]
         jchirac = [
@@ -3306,5 +3452,32 @@ def base_de_donnee_de_citation( category ):
     return bdd
 
 # MAIN
+#BUGS
+# Switching back and forth between modes messes things up
+debug=False
+debug=True
+
+# Globals
+bg_color                    = "#00000000"
+frame_color                 = "#00000000"
+background_image_visible    = False
+bg_image                    = "bg/glass.svg"
+quote_font                  = "Serif Bold Italic 12"
+quote_font_color            = "#00FE00"
+quote2_font_color           = "#000000"
+qauthor_font                = "Sans Bold 11"
+qauthor_font_color          = "#FEA900"
+qauthor2_font_color         = "#000000"
+size                        = 300
+interval                    = "hourly"
+heures                      = 1
+minutes                     = 0
+secondes                    = 0
+t0                          = MyDate( time.time )
+t1                          = t0.dup()
+t                           = MyDate( (heures, minutes, secondes) )
+citation_type               = "celebrity"
+
 #watch time
-#time.bind("time", appel_citation)
+initialize_timer(  )
+time.bind("time", refresh_quote)

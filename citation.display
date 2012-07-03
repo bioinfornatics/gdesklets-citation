@@ -3,12 +3,12 @@
  # \file citation.script
  # \brief gdesklets-citation it's a fun deskltes with all quotes in french
  # \author Jonathan MERCIER
- # \version 1.0
- # \date 09 march 2009
+ # \version 2.1
+ # \date 02 July 2012
  #
  #  LICENSE:
  #  gdesklets-citation it's a fun deskltes with all quotes in french
- #  Copyright (C) <2009-2010>  <MERCIER Jonathan>
+ #  Copyright (C) <2009-2012>  <MERCIER Jonathan>
  #
  #  This program is free software: you can redistribute it and/or modify
  #  it under the terms of the GNU General Public License as published by
@@ -31,24 +31,25 @@ Version History
             - Perform the interval time betwwen quote. now user can choose interval
 30 Jan 2009 - bug fix
             - Perform shadow text
+02 Jul 2012 - Add several categoriies, able to choose which to display
 TODO
 
 -->
 
-    <display id="win" anchor="ne" window-flags="sticky, below">
+<display id="win" anchor="ne" window-flags="sticky, below">
 
     <meta author="Jonathan MERCIER"
-        version="1.4"
+        version="2.1"
         name="Citation du jour"
         category="Misc"
-        description="Desklet qui affiche une citation périodiquement"
+        description="Desklet affichant des citations périodiquement"
         preview="citation.png"/>
 
     <!--  Retrieve the date/time control -->
     <control id="random" interface="IRandom:bss2bsoo8o0dl3kumdpegtrc2-2"/>
     <control id="time" interface="ITime:9y703dqtfnv4w373caserz68r"/>
 
-    <frame id="quoteframe" width="150pt">
+    <frame id="quoteframe" width="300pt">
         <group id="displaygroup" relative-to="quoteframe,y" width="100%">
             <image id="bg_image" image-width="100%" uri=""/>
 
@@ -115,11 +116,12 @@ TODO
                 <item label="Toutes les heures" value="hourly"  />
                 <item label="2 fois par jour"   value="twice"   />
                 <item label="Tous les jours"    value="daily"   />
-                <item label="Autres"            value="autres"  />
+                <item label="Autres"            value="others"  />
             </enum>
 
-            <integer id="heures"  label="Heure:"    bind="heures"   min="0" max="23" help="configure intervalle d'affichage de citation toutes les X heures" enabled="False"    />
-            <integer id="minutes" label="Minute:"   bind="minutes"  min="1" max="59" help="configure intervalle d'affichage de citation toutes les X minutes" enabled="False"   />
+            <integer id="heures"    label="Heure:"    bind="heures"   min="0" max="23" help="configure intervalle d'affichage de citation toutes les X heures"    enabled="False"   />
+            <integer id="minutes"   label="Minute:"   bind="minutes"  min="0" max="59" help="configure intervalle d'affichage de citation toutes les X minutes"   enabled="False"   />
+            <integer id="secondes"  label="Seconde:"  bind="secondes" min="0" max="59" help="configure intervalle d'affichage de citation toutes les X secondes"  enabled="False"   />
 
             <enum label="Type de citation" bind="citation_type" help="Sélectionne le type des citations">
                 <item label="Personne célèbre"  value="celebrity"   />
@@ -134,14 +136,4 @@ TODO
 
     <!-- This loads the quotes data -->
     <script uri="citation.py"/>
-
-    <script>
-        #<![CDATA[
-        # MAIN
-        #watch time
-        time.bind("time", intervalle_affiche_citation)
-        intervalle_affiche_citation(time.date)
-
-        ]]>
-     </script>
-    </display>
+</display>
