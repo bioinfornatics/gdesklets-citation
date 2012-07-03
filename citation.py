@@ -2,12 +2,12 @@
 # \file citation.py
 # \brief gdesklets-citation it's a fun deskltes with all quotes in french
 # \author Jonathan MERCIER
-# \version 1.0
-# \date 09 march 2009
+# \version 2.1
+# \date 03 July 2012
 #
 #  LICENSE:
 #  gdesklets-citation it's a fun deskltes with all quotes in french
-#  Copyright (C) <2009-2010>  <MERCIER Jonathan>
+#  Copyright (C) <2009-2012>  <MERCIER Jonathan>
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
